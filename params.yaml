@@ -3,7 +3,7 @@ preprocess:
   random_state: 42
 
 train:
-  epochs: 10
+  epochs: 15
   batch_size: 128
   hidden_units: 128
   dropout: 0.2
