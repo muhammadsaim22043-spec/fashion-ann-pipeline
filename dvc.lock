@@ -1,0 +1,87 @@
+schema: '2.0'
+stages:
+  prepare:
+    cmd: python src/prepare.py
+    deps:
+    - path: src/prepare.py
+      hash: md5
+      md5: e186ff0431a835bda24265a3f35588e1
+      size: 738
+    outs:
+    - path: data/raw
+      hash: md5
+      md5: 23b0000338669d2c61217dbd94633aa0.dir
+      size: 54950512
+      nfiles: 4
+  preprocess:
+    cmd: python src/preprocess.py
+    deps:
+    - path: data/raw
+      hash: md5
+      md5: 23b0000338669d2c61217dbd94633aa0.dir
+      size: 54950512
+      nfiles: 4
+    - path: src/preprocess.py
+      hash: md5
+      md5: 0857d1a38c4199e77014dcbfe375b9ee
+      size: 1606
+    params:
+      params.yaml:
+        preprocess.random_state: 42
+        preprocess.test_size: 0.2
+    outs:
+    - path: data/processed
+      hash: md5
+      md5: eeb8cf242a713e05d8e689a1ad558025.dir
+      size: 219590768
+      nfiles: 6
+  train:
+    cmd: python src/train.py
+    deps:
+    - path: data/processed
+      hash: md5
+      md5: eeb8cf242a713e05d8e689a1ad558025.dir
+      size: 219590768
+      nfiles: 6
+    - path: src/train.py
+      hash: md5
+      md5: 286a77f1e8db3eab01b15851a58a9b84
+      size: 1979
+    params:
+      params.yaml:
+        train.batch_size: 128
+        train.dropout: 0.2
+        train.epochs: 10
+        train.hidden_units: 128
+    outs:
+    - path: models
+      hash: md5
+      md5: a58686aa646fc08c00f188a3193d2941.dir
+      size: 1245969
+      nfiles: 2
+  evaluate:
+    cmd: python src/evaluate.py
+    deps:
+    - path: data/processed
+      hash: md5
+      md5: eeb8cf242a713e05d8e689a1ad558025.dir
+      size: 219590768
+      nfiles: 6
+    - path: models
+      hash: md5
+      md5: a58686aa646fc08c00f188a3193d2941.dir
+      size: 1245969
+      nfiles: 2
+    - path: src/evaluate.py
+      hash: md5
+      md5: 106cae484fe6583fa522ec602949bb1b
+      size: 2894
+    outs:
+    - path: metrics/confusion_matrix.png
+      hash: md5
+      md5: 1b04843cba38eebec87ea575adf6b5b4
+      size: 46552
+    - path: metrics/metrics.json
+      hash: md5
+      md5: 63c570cb1a836ea45dd7254b68570123
+      size: 217
